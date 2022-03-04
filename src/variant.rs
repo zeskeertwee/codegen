@@ -1,5 +1,6 @@
 use std::fmt::{self, Write};
 
+use crate::docs::Docs;
 use crate::fields::Fields;
 use crate::formatter::Formatter;
 
@@ -11,6 +12,7 @@ pub struct Variant {
     name: String,
     fields: Fields,
     annotations: Vec<String>,
+    doc: Option<Docs>
 }
 
 impl Variant {
@@ -20,6 +22,7 @@ impl Variant {
             name: name.to_string(),
             fields: Fields::Empty,
             annotations: Vec::new(),
+            doc: None,
         }
     }
 
@@ -38,6 +41,12 @@ impl Variant {
         self
     }
 
+    /// Set the variant documentation.
+    pub fn doc(&mut self, docs: &str) -> &mut Self {
+        self.doc = Some(Docs::new(docs));
+        self
+    }
+
     /// Add an anotation to the variant.
     pub fn annotation(&mut self, annotation: &str) -> &mut Self {
         self.annotations.push(annotation.to_string());
@@ -49,6 +58,9 @@ impl Variant {
         for a in &self.annotations {
             write!(fmt, "{}", a)?;
             write!(fmt, "\n")?;
+        }
+        if let Some(ref doc) = self.doc {
+            doc.fmt(fmt);
         }
         write!(fmt, "{}", self.name)?;
         self.fields.fmt(fmt)?;
