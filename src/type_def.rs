@@ -16,7 +16,7 @@ pub struct TypeDef {
     allow: Vec<String>,
     repr: Option<String>,
     bounds: Vec<Bound>,
-    macros: Vec<String>,
+    attributes: Vec<String>,
 }
 
 impl TypeDef {
@@ -30,7 +30,7 @@ impl TypeDef {
             allow: vec![],
             repr: None,
             bounds: vec![],
-            macros: vec![],
+            attributes: vec![],
         }
     }
 
@@ -48,8 +48,8 @@ impl TypeDef {
         });
     }
 
-    pub fn r#macro(&mut self, r#macro: &str) {
-        self.macros.push(r#macro.to_string());
+    pub fn attribute(&mut self, attribute: &str) {
+        self.attributes.push(attribute.to_string());
     }
 
     pub fn doc(&mut self, docs: &str) {
@@ -141,7 +141,7 @@ impl TypeDef {
     }
 
     fn fmt_macros(&self, fmt: &mut Formatter<'_>) -> fmt::Result {
-        for m in self.macros.iter() {
+        for m in self.attributes.iter() {
             write!(fmt, "{}\n", m)?;
         }
         Ok(())

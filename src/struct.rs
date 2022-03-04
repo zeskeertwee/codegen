@@ -76,8 +76,8 @@ impl Struct {
     }
 
     /// Add an arbitrary macro.
-    pub fn r#macro(&mut self, r#macro: &str) -> &mut Self {
-        self.type_def.r#macro(r#macro);
+    pub fn attribute(&mut self, attribute: &str) -> &mut Self {
+        self.type_def.attribute(attribute);
         self
     }
 
