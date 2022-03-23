@@ -22,6 +22,8 @@ pub struct Impl {
     /// Associated types
     assoc_tys: Vec<Field>,
 
+    consts: Vec<(Field, Type)>,
+
     /// Bounds
     bounds: Vec<Bound>,
 
@@ -41,6 +43,7 @@ impl Impl {
             generics: vec![],
             impl_trait: None,
             assoc_tys: vec![],
+            consts: vec![],
             bounds: vec![],
             fns: vec![],
             macros: vec![],
@@ -118,6 +121,17 @@ impl Impl {
         self
     }
 
+    /// Push a new constant.
+    pub fn new_const(&mut self, name: &str, ty: Type, value: Type) -> &mut Self {
+        self.consts.push((Field {
+            name: name.to_string(),
+            ty,
+            documentation: Vec::new(),
+            annotation: Vec::new(),
+        }, value));
+        self
+    }
+
     /// Formats the impl block using the given formatter.
     pub fn fmt(&self, fmt: &mut Formatter<'_>) -> fmt::Result {
         for m in self.macros.iter() {
@@ -143,6 +157,16 @@ impl Impl {
                 for ty in &self.assoc_tys {
                     write!(fmt, "type {} = ", ty.name)?;
                     ty.ty.fmt(fmt)?;
+                    write!(fmt, ";\n")?;
+                }
+            }
+
+            if !self.consts.is_empty() {
+                for c in &self.consts {
+                    write!(fmt, "const {}: ", c.0.name)?;
+                    c.0.ty.fmt(fmt)?;
+                    write!(fmt, " = ")?;
+                    c.1.fmt(fmt)?;
                     write!(fmt, ";\n")?;
                 }
             }
